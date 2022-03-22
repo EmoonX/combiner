@@ -1,5 +1,11 @@
 use image::{io::Reader, DynamicImage, ImageFormat};
 
+/// Enum holding image data error type.
+#[derive(Debug)]
+pub enum ImageDataErrors {
+    DifferentImageFormats
+}  
+
 /// Read image from path and return both the image data and its format.
 pub fn find_image_from_path(path: String) -> (DynamicImage, ImageFormat) {
     // Build reader by opening image
