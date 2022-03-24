@@ -3,7 +3,8 @@ mod img;
 
 use args::Args;
 use crate::img::{
-    find_image_from_path, standardize_size, get_image_dimensions,
+    find_image_from_path, standardize_size,
+    get_image_dimensions, combine_images,
     FloatingImage, ImageDataErrors
 };
 
@@ -24,8 +25,10 @@ fn main() -> Result<(), ImageDataErrors> {
     standardize_size(&image_1, &image_2);
 
     // Create output image object from dimensions and name
-    let (width, height) = get_image_dimensions(image_1);
+    let (width, height) = get_image_dimensions(&image_1);
     let output = FloatingImage::new(width, height, args.output);
-    
+
+    let combined_data = combine_images(image_1, image_2);
+
     Ok(())
 }

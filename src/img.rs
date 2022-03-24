@@ -4,6 +4,7 @@ use image::{
 };
 
 /// Represents a floating image with specified size, data and name.
+/// 
 /// Data is represented as a vector buffer of `u8`s.
 pub struct FloatingImage {
     width:  u32,
@@ -43,7 +44,8 @@ pub fn standardize_size(image_1: &DynamicImage, image_2: &DynamicImage) {
 }
 
 /// Compare images by total number of pixels.
-/// Return reference to smallest one.
+/// 
+/// Return reference to the smallest one.
 fn get_smallest_image<'a>(image_1: &'a DynamicImage, image_2: &'a DynamicImage)
         -> &'a DynamicImage {
     let (dim_1, dim_2) = (image_1.dimensions(), image_2.dimensions());
@@ -52,7 +54,8 @@ fn get_smallest_image<'a>(image_1: &'a DynamicImage, image_2: &'a DynamicImage)
     if pix_1 < pix_2 { image_1 } else { image_2 }
 }
 
-pub fn get_image_dimensions(image: DynamicImage) -> (u32, u32) {
+/// Get image dimensions in a (width, height) tuple
+pub fn get_image_dimensions(image: &DynamicImage) -> (u32, u32) {
     (image.width(), image.height())
 }
 
@@ -63,4 +66,28 @@ impl FloatingImage {
         let buffer = Vec::with_capacity(buffer_capacity);
         FloatingImage { width, height, data: buffer, name }
     }
+}
+
+/// Combine two images by using the alternating pixels algorithm.
+/// 
+/// Return a `Vec<u8>` containing result's data.
+pub fn combine_images(image_1: DynamicImage, image_2: DynamicImage) -> Vec<u8> {
+    let vec_1 = image_1.to_rgba8().into_vec();
+    let vec_2 = image_2.to_rgba8().into_vec();
+    alternate_pixels(vec_1, vec_2)
+}
+
+/// Build a vector of RGBA pixels by picking alternating values from
+/// given vectors (0..=3 from the first one, 4..=7 from the second,
+/// 8..=11 from the third, and so on).
+fn alternate_pixels(vec_1: Vec<u8>, vec_2: Vec<u8>) -> Vec<u8> {
+    let mut combined_data = vec![0; vec_1.len()];
+    for i in (0..vec_1.len()).step_by(4) {
+        for j in i..=(i+3) {
+            combined_data[j] = {
+                if i % 8 == 0 { vec_1[j] } else { vec_2[j] }
+            };
+        }
+    }
+    combined_data
 }
