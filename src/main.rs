@@ -32,5 +32,8 @@ fn main() -> Result<(), ImageDataErrors> {
     let combined_data = combine_images(image_1, image_2);
     output.set_data(combined_data)?;
 
+    // Finally, save image to file
+    output.write_to_file(format_1);
+
     Ok(())
 }

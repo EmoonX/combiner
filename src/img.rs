@@ -1,6 +1,6 @@
 use image::{
-    io::Reader, DynamicImage, ImageFormat,
-    GenericImageView, imageops::FilterType::Triangle
+    DynamicImage, ImageFormat, GenericImageView,
+    io::Reader, imageops::FilterType, ColorType
 };
 
 /// Represents a floating image with specified size, data and name.
@@ -38,12 +38,13 @@ pub fn find_image_from_path(path: String) -> (DynamicImage, ImageFormat) {
 /// Resize biggest image to fit smallest's size.
 pub fn standardize_size(image_1: &DynamicImage, image_2: &DynamicImage) {
     let smallest = get_smallest_image(image_1, image_2);
+    let width = smallest.width();
+    let height = smallest.height();
+    let filter = FilterType::Triangle;
     if smallest == image_1 {
-        image_2.resize_exact(
-            smallest.width(), smallest.height(), Triangle);
+        image_2.resize_exact(width, height, filter);
     } else {
-        image_1.resize_exact(
-            smallest.width(), smallest.height(), Triangle);
+        image_1.resize_exact(width, height, filter);
     }
 }
 
@@ -78,6 +79,14 @@ impl FloatingImage {
         }
         self.data = data;
         Ok(())
+    }
+
+    /// Save output image with given format and attributes.
+    pub fn write_to_file(&mut self, format: ImageFormat) {
+        image::save_buffer_with_format(
+            &self.name, &self.data, self.width, self.height,
+            ColorType::Rgba8, format
+        ).unwrap();
     }
 }
 
