@@ -16,7 +16,11 @@ pub struct FloatingImage {
 /// Enum holding image data error type.
 #[derive(Debug)]
 pub enum ImageDataErrors {
-    DifferentImageFormats
+    /// Image format mismatch (e.g a .jpg and .png for input).
+    DifferentImageFormats,
+
+    /// Output data is bigger than buffer's capacity (956 * 956 * 4 bytes).
+    BufferTooSmall
 }  
 
 /// Read image from path and return both the image data and its format.
@@ -65,6 +69,15 @@ impl FloatingImage {
         let buffer_capacity = 956 * 956 * 4;
         let buffer = Vec::with_capacity(buffer_capacity);
         FloatingImage { width, height, data: buffer, name }
+    }
+
+    /// Move given data to data buffer.
+    pub fn set_data(&mut self, data: Vec<u8>) -> Result<(), ImageDataErrors> {
+        if data.len() > self.data.capacity() {
+            return Err(ImageDataErrors::BufferTooSmall);
+        }
+        self.data = data;
+        Ok(())
     }
 }
 

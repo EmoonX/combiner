@@ -26,9 +26,11 @@ fn main() -> Result<(), ImageDataErrors> {
 
     // Create output image object from dimensions and name
     let (width, height) = get_image_dimensions(&image_1);
-    let output = FloatingImage::new(width, height, args.output);
+    let mut output = FloatingImage::new(width, height, args.output);
 
+    // Combine images and set output data
     let combined_data = combine_images(image_1, image_2);
+    output.set_data(combined_data)?;
 
     Ok(())
 }
