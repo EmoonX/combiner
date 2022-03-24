@@ -34,6 +34,7 @@ fn main() -> Result<(), ImageDataErrors> {
 
     // Finally, save image to file
     output.write_to_file(format_1);
+    println!("Image {} successfully generated!", output.name);
 
     Ok(())
 }

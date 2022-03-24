@@ -7,10 +7,10 @@ use image::{
 /// 
 /// Data is represented as a vector buffer of `u8`s.
 pub struct FloatingImage {
-    width:  u32,
-    height: u32,      
-    data:   Vec<u8>,
-    name:   String
+        width:  u32,
+        height: u32,      
+        data:   Vec<u8>,
+    pub name:   String
 } 
 
 /// Enum holding image data error type.
@@ -26,12 +26,13 @@ pub enum ImageDataErrors {
 /// Read image from path and return both the image data and its format.
 pub fn find_image_from_path(path: String) -> (DynamicImage, ImageFormat) {
     // Build reader by opening image
-    let reader = Reader::open(path).unwrap();
-
+    let reader = match Reader::open(&path) {
+        Ok(r) => r,
+        Err(_) => panic!("Problem opening file: {}", path)
+    };
     // `.format()` must be called first, as `.decode()` moves `reader`
     let format = reader.format().unwrap();
     let image = reader.decode().unwrap();
-
     (image, format)
 }
 
