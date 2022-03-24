@@ -1,4 +1,16 @@
-use image::{io::Reader, DynamicImage, ImageFormat, GenericImageView, imageops::FilterType::Triangle};
+use image::{
+    io::Reader, DynamicImage, ImageFormat,
+    GenericImageView, imageops::FilterType::Triangle
+};
+
+/// Represents a floating image with specified size, data and name.
+/// Data is represented as a vector buffer of `u8`s.
+pub struct FloatingImage {
+    width:  u32,
+    height: u32,      
+    data:   Vec<u8>,
+    name:   String
+} 
 
 /// Enum holding image data error type.
 #[derive(Debug)]
@@ -38,4 +50,17 @@ fn get_smallest_image<'a>(image_1: &'a DynamicImage, image_2: &'a DynamicImage)
     let pix_1 = dim_1.0 * dim_1.1;
     let pix_2 = dim_2.0 * dim_2.1;
     if pix_1 < pix_2 { image_1 } else { image_2 }
+}
+
+pub fn get_image_dimensions(image: DynamicImage) -> (u32, u32) {
+    (image.width(), image.height())
+}
+
+impl FloatingImage {
+    /// Creates a new `FloatingImage`with underlying data buffer.
+    pub fn new(width: u32, height: u32, name: String) -> Self {
+        let buffer_capacity = 956 * 956 * 4;
+        let buffer = Vec::with_capacity(buffer_capacity);
+        FloatingImage { width, height, data: buffer, name }
+    }
 }
